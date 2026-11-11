@@ -1,25 +1,50 @@
 <?php
- require_once "conexao.php";
+require_once"conexao.php";
+//1. CRIE TABELA
+$sql = "CREATE TABLE IF NOT EXISTS produtos(
+id INT AUTO_INCREMENT PRIMARY KEY,
+nome VARCHAR(100) NOT NULL,
+preco DECIMAL(10,2) NOT NULL,
+quantidade INT NOT NULL)"
 
- $sql = "CREATE TABLE IF NOT EXISTS produtos (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      nome VARCHAR(100) NOT NULL,
-      preco DECIMAL(10,2) NOT NULL,
-      quantidade INT NOT NULL";
+$pdo -> exec($sql);
 
-      $pdo->exec($sql);
+if(isset($_POST["cadastrar"])){
+    $nome=$_POST["nome"];
+    $preco=$_POST["preco"];
+    $quantidade=$_POST["quantidade"];
+    $sql - "INSERT INTO produtos (nome,preco,quantidade) VALUES ('$nome',$preco,$quantidade)";
+$stmt = $pdo->prepare($sql);
 
-      if (isset($_post["cadastrar"])) {
-         $nome = "processador ultra 9"
-         $preco =
-         $quantidade = 
+$stml ->execute([
+"nome" =>$nome,
+"preco" => $preco,
+"quantidade" => $quantidade,
+"id"=> $id
 
-         $sql - "INSERT INTO produtos";
+]);
+
+}if(isset($_POST["excluir"])){
+    $id=$_POST["id"];
+    $sql = "DELETE FROM produtos WHERE id = $id";
+    $stmt = $pdo->prepare($sql);
+    $stmt -> execute(["id"=>$id]);
+
+    
 
 
+}
+$produtoEditar = null;
+if(isset($GET["editar"])){
+    $id=$_GET["editar"];
+    $sql = "DELETE FROM produtos WHERE id = $id";
+    $stmt = $pdo->prepare($sql);
+    $stmt -> execute(["id"=>$id]);
+    $produtoEditar = $stmt-> fetch(PDO::FETCH_ASSOC);
 
-      }
+}
 
+$sql = "SELECT * FROM produtos WHERE id = $id";
 ?>
 
 <!DOCTYPE html>
@@ -74,27 +99,27 @@ echo "editar produto";
 <th>Preço</th>
 <th>Quantidade</th>
 <th>Ações</th>
-
+</tr>
 <?php foreach ($produtos as $produto) { ?>
 
+    <tr>
 <td><?=  $produto['id'] ?></td>
 <td><?= htmlspecialchars($produto['id']) ?> </td>
 <td>R$<?= number_format($produto['preco'],2,",",".") ?> </td>
-<td><?= $produto["quantidade"] ?>
-</td>
-
-<a href="index.php?editar=<? $produto['id'] ?>">Editar</a>
-
-<form action="index.php" method="post" style="display:inline;">
-<input type="hidden" name="id" value="<?= $produto['id'] ?>">
-<button type="submit" name="excluir" onclick="return confirm
-('Deseja excluir este produto?')">Excluir</button>
+<td><?= $produto["quantidade"] ?></td>
+<td>
+    <a href="index.php?editar=<?= $produto ['id'] ?> ">Editar</a>
+<form method="POST" action="index.php" style="display:inline;">
+    <input type="hidden" name="id" value  <?=$produto['id'] ?>>
+    <button type="submit" name="excluir" onclick="return confirm
+    ('Deseja excluir esse produto?')">Excluir</button>
 </form>
-</<td>
+
+</td>
 </tr>
+
+
 <?php } ?>
-
-
 
 
 
